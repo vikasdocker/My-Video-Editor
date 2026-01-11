@@ -1162,14 +1162,10 @@ private fun ExportDialog(
                         // Log.e("open-video-editor", "Export exception: ", exception)
                     }
                 }
-            val onFFmpegError: () -> Unit = {
-                exportString = context.getString(R.string.ffmpeg_error)
-            }
             transformManager.export(
-                context,
+                activity,
                 exportSettings,
-                transformerListener,
-                onFFmpegError
+                transformerListener
             )
             isExporting = true
         }
