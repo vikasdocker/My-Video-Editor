@@ -195,6 +195,20 @@ fun VideoEditorScreen(
 
     DisposableEffect(key1 = Unit) {
         val listenerHandler = Handler(getMainLooper())
+        val updateRunnable = object : Runnable {
+            override fun run() {
+                currentTime =
+                    player.currentPosition.coerceAtLeast(0L)
+                currentTimeFrames =
+                    ((currentTime * fpm).toLong()).coerceAtMost(
+                        totalDurationFrames
+                    )
+                listenerHandler.postDelayed(
+                    this,
+                    REFRESH_RATE
+                )
+            }
+        }
         val listener =
             object : Player.Listener {
 
@@ -213,36 +227,8 @@ fun VideoEditorScreen(
                     }
 
                     if (regularPlayer.isPlaying) {
-                        if (!listenerHandler.hasCallbacks(object : Runnable {
-                                override fun run() {
-                                    currentTime =
-                                        player.currentPosition.coerceAtLeast(0L)
-                                    currentTimeFrames =
-                                        ((currentTime * fpm).toLong()).coerceAtMost(
-                                            totalDurationFrames
-                                        )
-                                    listenerHandler.postDelayed(
-                                        this,
-                                        REFRESH_RATE
-                                    )
-                                }
-                            })) {
-                            listenerHandler.post(
-                                object : Runnable {
-                                    override fun run() {
-                                        currentTime =
-                                            player.currentPosition.coerceAtLeast(0L)
-                                        currentTimeFrames =
-                                            ((currentTime * fpm).toLong()).coerceAtMost(
-                                                totalDurationFrames
-                                            )
-                                        listenerHandler.postDelayed(
-                                            this,
-                                            REFRESH_RATE
-                                        )
-                                    }
-                                }
-                            )
+                        if (!listenerHandler.hasCallbacks(updateRunnable)) {
+                            listenerHandler.post(updateRunnable)
                         }
                     } else {
                         listenerHandler.removeCallbacksAndMessages(null)
@@ -269,9 +255,7 @@ fun VideoEditorScreen(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.systemBars)) {
+            Column(modifier = Modifier.fillMaxSize()) {
                 EditorTopBar(
                     onClose = { (context as Activity).finish() },
                     onExport = { /* TODO */ }
@@ -723,7 +707,7 @@ private fun BottomControls(
                             viewModel.setCurrentEditingEffect(null)
                         } else {
                             viewModel.setFilterDurationEditorEnabled(false)
-                            viewModel.filterDurationCallback.value(
+                            filterDurationCallback(
                                 LongRange(
                                     filterDurationEditorSliderPosition.start.toLong(),
                                     filterDurationEditorSliderPosition.endInclusive.toLong()
@@ -1137,7 +1121,7 @@ private fun ExportDialog(
                     }
                 }
             transformManager.export(
-                activity,
+                context,
                 exportSettings,
                 transformerListener
             )

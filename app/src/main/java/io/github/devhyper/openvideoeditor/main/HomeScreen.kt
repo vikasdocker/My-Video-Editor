@@ -1,3 +1,6 @@
+
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package io.github.devhyper.openvideoeditor.main
 
 import androidx.compose.foundation.background
@@ -37,9 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.devhyper.openvideoeditor.ui.theme.OpenVideoEditorTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(onNewVideoClick: () -> Unit) {
     Scaffold(
         topBar = { HomeAppBar() }
     ) { paddingValues ->
@@ -50,7 +52,7 @@ fun HomeScreen() {
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
-            NewProjectSection()
+            NewProjectSection(onNewVideoClick = onNewVideoClick)
             Spacer(modifier = Modifier.height(24.dp))
             FeatureGrid()
             Spacer(modifier = Modifier.height(24.dp))
@@ -89,7 +91,7 @@ fun HomeAppBar() {
 }
 
 @Composable
-fun NewProjectSection() {
+fun NewProjectSection(onNewVideoClick: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -97,22 +99,29 @@ fun NewProjectSection() {
         NewProjectCard(
             title = "New Video",
             icon = Icons.Default.Videocam,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            onClick = onNewVideoClick
         )
         NewProjectCard(
             title = "Edit Photo",
             icon = Icons.Default.Photo,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            onClick = { /* TODO */ }
         )
     }
 }
 
 @Composable
-fun NewProjectCard(title: String, icon: ImageVector, modifier: Modifier = Modifier) {
+fun NewProjectCard(
+    title: String,
+    icon: ImageVector,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Card(
         modifier = modifier.height(120.dp),
         shape = RoundedCornerShape(16.dp),
-        onClick = { /*TODO*/ }
+        onClick = onClick
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -223,6 +232,6 @@ fun ProjectCard(modifier: Modifier = Modifier) {
 @Composable
 fun HomeScreenPreview() {
     OpenVideoEditorTheme {
-        HomeScreen()
+        HomeScreen(onNewVideoClick = {})
     }
 }

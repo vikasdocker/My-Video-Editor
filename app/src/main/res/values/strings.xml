@@ -67,4 +67,5 @@
     <string name="font">Font</string>
     <string name="amoled_dark_theme">AMOLED dark theme</string>
     <string name="permission_denied_grant_video_permissions">Permission denied, grant video permissions</string>
+    <string name="close_editor">Close editor</string>
 </resources>
