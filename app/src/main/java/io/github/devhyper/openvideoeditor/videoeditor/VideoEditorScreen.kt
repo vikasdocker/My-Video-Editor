@@ -1,15 +1,18 @@
 package io.github.devhyper.openvideoeditor.videoeditor
-
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.ui.graphics.SolidColor
 import android.app.Activity
 import android.content.Intent
 import android.media.MediaScannerConnection
+import android.os.Build
 import android.os.Handler
 import android.os.Looper.getMainLooper
 import android.view.TextureView
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.activity.result.ActivityResultLauncher
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateFloatAsState
@@ -212,6 +215,7 @@ fun VideoEditorScreen(
         val listener =
             object : Player.Listener {
 
+                @RequiresApi(Build.VERSION_CODES.Q)
                 override fun onEvents(
                     regularPlayer: Player,
                     events: Player.Events
